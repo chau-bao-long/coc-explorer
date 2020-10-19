@@ -63,6 +63,7 @@ const defaultMappingGroups: Record<
     r: 'rename',
 
     '.': 'toggleHidden',
+    gt: 'toggleOnlyGitChange',
     R: 'refresh',
 
     '?': 'help',

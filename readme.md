@@ -649,6 +649,10 @@ Default: <pre><code>{
 Default: <pre><code>false</code></pre>
 </details>
 <details>
+<summary><code>explorer.file.showOnlyGitChange</code>: Default show only git changed files. type: <code>boolean</code></summary>
+Default: <pre><code>false</code></pre>
+</details>
+<details>
 <summary><code>explorer.file.root.template</code>: Template for root node of file source. type: <code>string</code></summary>
 Default: <pre><code>"[icon] [title] [hidden & 1][root] [fullpath]"</code></pre>
 </details>

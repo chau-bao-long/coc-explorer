@@ -33,9 +33,9 @@ export function initFileActions(file: FileSource) {
       }
       const nodeUid = file.currentNode()?.uid;
       if (/^[A-Za-z]:[\\\/]$/.test(file.root)) {
-        file.root = '';
+        await file.setRoot('');
       } else {
-        file.root = pathLib.dirname(file.root);
+        await file.setRoot(pathLib.dirname(file.root));
         await file.cd(file.root);
       }
       await file.expand(file.rootNode);
@@ -150,7 +150,7 @@ export function initFileActions(file: FileSource) {
     async ({ node, args }) => {
       const cdTo = async (fullpath: string) => {
         await file.cd(fullpath);
-        file.root = fullpath;
+        await file.setRoot(fullpath);
         await file.expand(file.rootNode);
       };
       const path = args[0];
@@ -557,7 +557,7 @@ export function initFileActions(file: FileSource) {
           drives.map((drive) => ({
             name: drive,
             callback: async (drive) => {
-              file.root = drive;
+              await file.setRoot(drive);
               await file.expand(file.rootNode);
             },
           })),

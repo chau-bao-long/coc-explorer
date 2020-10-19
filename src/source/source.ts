@@ -146,6 +146,7 @@ export abstract class ExplorerSource<TreeNode extends BaseTreeNode<TreeNode>>
   width: number = 0;
   flattenedNodes: TreeNode[] = [];
   showHidden: boolean = false;
+  showOnlyGitChange: boolean = false;
   selectedNodes: Set<TreeNode> = new Set();
   rootExpanded = false;
   nvim = workspace.nvim;
@@ -362,6 +363,14 @@ export abstract class ExplorerSource<TreeNode extends BaseTreeNode<TreeNode>>
         this.showHidden = !this.showHidden;
       },
       'toggle visibility of hidden node',
+      { reload: true },
+    );
+    this.addNodeAction(
+      'toggleOnlyGitChange',
+      async () => {
+        this.showOnlyGitChange = !this.showOnlyGitChange;
+      },
+      'toggle visibility of git change node',
       { reload: true },
     );
     this.addNodeAction(

@@ -4,6 +4,7 @@ import { homedir } from 'os';
 import pathLib from 'path';
 import { argOptions } from '../../../argOptions';
 import { onBufEnter } from '../../../events';
+import { gitManager } from '../../../gitManager';
 import { fileList } from '../../../lists/files';
 import { onError } from '../../../logger';
 import {
@@ -72,6 +73,7 @@ export class FileSource extends ExplorerSource<FileNode> {
   scheme = 'file';
   hlSrcId = workspace.createNameSpace('coc-explorer-file');
   showHidden: boolean = this.config.get<boolean>('file.showHiddenFiles')!;
+  showOnlyGitChange: boolean = this.config.get<boolean>('file.showOnlyGitChange')!;
   copiedNodes: Set<FileNode> = new Set();
   cutNodes: Set<FileNode> = new Set();
   rootNode: FileNode = {
@@ -99,10 +101,14 @@ export class FileSource extends ExplorerSource<FileNode> {
     return this.rootNode.fullpath;
   }
 
-  set root(root: string) {
+  async setRoot(root: string) {
     this.rootNode.uid = this.helper.getUid(root);
     this.rootNode.fullpath = root;
     this.rootNode.children = undefined;
+
+    await gitManager.reload(root, false);
+    const loadNotifier = await this.loadNotifier(this.rootNode, { force: true });
+    loadNotifier?.notify();
   }
 
   getHiddenRules() {
@@ -126,6 +132,10 @@ export class FileSource extends ExplorerSource<FileNode> {
         new RegExp(pattern).test(filename),
       )
     );
+  }
+
+  isGitChange(parentNode: FileNode, filename: string): boolean {
+    return !!gitManager.getMixedStatus(parentNode.fullpath + "/" + filename);
   }
 
   getColumnConfig<T>(name: string, defaultValue?: T): T {
@@ -197,7 +207,7 @@ export class FileSource extends ExplorerSource<FileNode> {
       await this.explorer.args.value(argOptions.fileChildLabelingTemplate),
     );
 
-    this.root = this.explorer.rootUri;
+    await this.setRoot(this.explorer.rootUri);
   }
 
   async cd(fullpath: string) {
@@ -389,6 +399,10 @@ export class FileSource extends ExplorerSource<FileNode> {
     const files = await Promise.all(
       filenames.map(async (filename) => {
         try {
+          if (this.showOnlyGitChange && !this.isGitChange(parentNode, filename)) {
+            return;
+          }
+
           const hidden = this.isHidden(filename);
           if (!this.showHidden && hidden) {
             return;
