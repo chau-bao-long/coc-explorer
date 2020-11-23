@@ -6,7 +6,7 @@ import { argOptions } from '../../../argOptions';
 import { onBufEnter } from '../../../events';
 import { gitManager } from '../../../gitManager';
 import { fileList } from '../../../lists/files';
-import { onError } from '../../../logger';
+import { onError, log } from '../../../logger';
 import {
   fsAccess,
   fsLstat,
@@ -170,7 +170,7 @@ export class FileSource extends ExplorerSource<FileNode> {
               if (revealNode) {
                 await Notifier.runAll(notifiers);
               }
-            }, 200),
+            }, 500),
           );
         }
       } else {
