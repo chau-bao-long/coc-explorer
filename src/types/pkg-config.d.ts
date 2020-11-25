@@ -558,6 +558,10 @@ export interface Explorer {
    */
   'explorer.git.showIgnored'?: boolean;
   /**
+   * Default show only git changed files
+   */
+  'explorer.git.showOnlyGitChange'?: boolean;
+  /**
    * Enable debug
    */
   'explorer.debug'?: boolean;

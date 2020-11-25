@@ -178,7 +178,7 @@ export class FileSource extends ExplorerSource<FileNode> {
               if (revealNode) {
                 await Notifier.runAll(notifiers);
               }
-            }, 200),
+            }, 1000),
           );
         }
       } else {
