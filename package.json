@@ -540,6 +540,7 @@
                 "description": "Explorer source name",
                 "type": "string",
                 "enum": [
+                  "gitTree",
                   "bookmark",
                   "buffer",
                   "file"
@@ -554,6 +555,10 @@
           },
           "default": [
             {
+              "name": "gitTree",
+              "expand": false
+            },
+            {
               "name": "bookmark",
               "expand": false
             },
@@ -563,7 +568,7 @@
             },
             {
               "name": "file",
-              "expand": true
+              "expand": false
             }
           ]
         },
@@ -702,6 +707,65 @@
           "description": "Explorer datetime format, check out https://date-fns.org/v2.9.0/docs/format",
           "type": "string",
           "default": "yy/MM/dd HH:mm:ss"
+        },
+        "explorer.gitTree.hiddenRules": {
+          "description": "Custom hidden rules for file",
+          "type": "object",
+          "default": {
+            "extensions": [
+              "o",
+              "a",
+              "obj",
+              "pyc"
+            ],
+            "filenames": [],
+            "patternMatches": [
+              "^\\."
+            ]
+          },
+          "properties": {
+            "extensions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "filenames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "patternMatches": {
+              "type": "array",
+              "description": "Pattern to icon group"
+            }
+          }
+        },
+        "explorer.gitTree.showHiddenFiles": {
+          "description": "Default show hidden files",
+          "type": "boolean",
+          "default": false
+        },
+        "explorer.gitTree.root.template": {
+          "description": "Template for root node of file source",
+          "type": "string",
+          "default": "[icon] [title] [git & 1][hidden & 1][root] [fullpath]"
+        },
+        "explorer.gitTree.root.labelingTemplate": {
+          "description": "Labeling template for root node of file source, use for preview when previewAction is labeling",
+          "type": "string",
+          "default": "[fullpath][git]"
+        },
+        "explorer.gitTree.child.template": {
+          "description": "Template for child node file source",
+          "type": "string",
+          "default": "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]"
+        },
+        "explorer.gitTree.child.labelingTemplate": {
+          "description": "Labeling template for child node of file source, use for preview when previewAction is labeling",
+          "type": "string",
+          "default": "[fullpath][link][diagnosticError][diagnosticWarning][git][size][timeAccessed][timeModified][timeCreated][readonly][modified]"
         },
         "explorer.file.revealWhenOpen": {
           "description": "Explorer will automatically reveal to the current buffer when open explorer",
