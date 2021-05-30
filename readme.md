@@ -614,7 +614,7 @@ Type: <pre><code>{
             /**
              * Explorer source name
              */
-            name: 'bookmark' | 'buffer' | 'file';
+            name: 'gitTree' | 'bookmark' | 'file';
             /**
              * Whether to expand it by default
              */
@@ -870,13 +870,17 @@ Type: <pre><code>{
     /**
      * Explorer source name
      */
-    name: 'bookmark' | 'buffer' | 'file';
+    name: 'gitTree' | 'bookmark' | 'buffer' | 'file';
     /**
      * Whether to expand it by default
      */
     expand: boolean;
     [k: string]: unknown;
 }[]</code></pre>Default: <pre><code>[
+  {
+    "name": "gitTree",
+    "expand": false
+  },
   {
     "name": "bookmark",
     "expand": false
@@ -887,7 +891,7 @@ Type: <pre><code>{
   },
   {
     "name": "file",
-    "expand": true
+    "expand": false
   }
 ]</code></pre>
 </details>
@@ -1016,6 +1020,49 @@ Type: <pre><code>string</code></pre>Default: <pre><code>"[name][bufname][fullpat
 <details>
 <summary><code>explorer.datetime.format</code>: Explorer datetime format, check out https://date-fns.org/v2.9.0/docs/format.</summary>
 Type: <pre><code>string</code></pre>Default: <pre><code>"yy/MM/dd HH:mm:ss"</code></pre>
+</details>
+<details>
+<summary><code>explorer.gitTree.hiddenRules</code>: Custom hidden rules for file.</summary>
+Type: <pre><code>{
+    extensions?: string[];
+    filenames?: string[];
+    /**
+     * Pattern to icon group
+     */
+    patternMatches?: unknown[];
+    [k: string]: unknown;
+}</code></pre>Default: <pre><code>{
+  "extensions": [
+    "o",
+    "a",
+    "obj",
+    "pyc"
+  ],
+  "filenames": [],
+  "patternMatches": [
+    "^\\."
+  ]
+}</code></pre>
+</details>
+<details>
+<summary><code>explorer.gitTree.showHiddenFiles</code>: Default show hidden files.</summary>
+Type: <pre><code>boolean</code></pre>Default: <pre><code>false</code></pre>
+</details>
+<details>
+<summary><code>explorer.gitTree.root.template</code>: Template for root node of file source.</summary>
+Type: <pre><code>string</code></pre>Default: <pre><code>"[icon] [title] [git & 1][hidden & 1][root] [fullpath]"</code></pre>
+</details>
+<details>
+<summary><code>explorer.gitTree.root.labelingTemplate</code>: Labeling template for root node of file source, use for preview when previewAction is labeling.</summary>
+Type: <pre><code>string</code></pre>Default: <pre><code>"[fullpath][git]"</code></pre>
+</details>
+<details>
+<summary><code>explorer.gitTree.child.template</code>: Template for child node file source.</summary>
+Type: <pre><code>string</code></pre>Default: <pre><code>"[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]"</code></pre>
+</details>
+<details>
+<summary><code>explorer.gitTree.child.labelingTemplate</code>: Labeling template for child node of file source, use for preview when previewAction is labeling.</summary>
+Type: <pre><code>string</code></pre>Default: <pre><code>"[fullpath][link][diagnosticError][diagnosticWarning][git][size][timeAccessed][timeModified][timeCreated][readonly][modified]"</code></pre>
 </details>
 <details>
 <summary><code>explorer.file.revealWhenOpen</code>: Explorer will automatically reveal to the current buffer when open explorer.</summary>

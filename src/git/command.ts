@@ -1,4 +1,4 @@
-import { Emitter } from 'coc.nvim';
+import { Emitter, window } from 'coc.nvim';
 import commandExists from 'command-exists';
 import pathLib from 'path';
 import { config } from '../config';
@@ -141,6 +141,18 @@ export class GitCommand {
     return paths;
   }
 
+  private parseDiffLine(gitRoot: string, line: string) {
+    const yFormat = this.parseStatusFormat(line[0]);
+    const rawPath = line.slice(2);
+    const hasArrow = [GitFormat.renamed, GitFormat.copied].includes(yFormat);
+    const paths = this.parsePath(rawPath, hasArrow);
+    return [
+      GitFormat.unmodified,
+      yFormat,
+      ...paths.map((p) => pathLib.join(gitRoot, p)),
+    ] as [GitFormat, GitFormat, string, string | undefined];
+  }
+
   private parseStatusLine(gitRoot: string, line: string) {
     const xFormat = this.parseStatusFormat(line[0]);
     const yFormat = this.parseStatusFormat(line[1]);
@@ -181,6 +193,62 @@ export class GitCommand {
         return;
       }
       const [x_, y_, leftpath, rightpath] = this.parseStatusLine(root, line);
+      const x = x_ === GitFormat.untracked ? GitFormat.unmodified : x_;
+      const y = y_ === GitFormat.ignored ? GitFormat.unmodified : y_;
+
+      const changedList = [
+        GitFormat.modified,
+        GitFormat.added,
+        GitFormat.deleted,
+        GitFormat.renamed,
+        GitFormat.copied,
+      ];
+      const added = x === GitFormat.added || y === GitFormat.added;
+      const modified = x === GitFormat.modified || y === GitFormat.modified;
+      const deleted = x === GitFormat.deleted || y === GitFormat.deleted;
+      const renamed = x === GitFormat.renamed || y === GitFormat.renamed;
+      const copied = x === GitFormat.copied || y === GitFormat.copied;
+      const staged = changedList.includes(x) && y === GitFormat.unmodified;
+      const unmerged =
+        (x === GitFormat.deleted && y === GitFormat.deleted) ||
+        (x === GitFormat.added && y === GitFormat.added) ||
+        x === GitFormat.unmerged ||
+        y === GitFormat.unmerged;
+      const ignored = x === GitFormat.ignored;
+      const untracked = y === GitFormat.untracked;
+
+      const fullpath = rightpath ? rightpath : leftpath;
+      gitStatus[fullpath] = {
+        fullpath,
+        x,
+        y,
+
+        added,
+        modified,
+        deleted,
+        renamed,
+        copied,
+
+        staged,
+        unmerged,
+        untracked,
+        ignored,
+      };
+    });
+
+    return gitStatus;
+  }
+
+  async diff(commit: string, root: string): Promise<Record<string, GitStatus>> {
+    const gitStatus: Record<string, GitStatus> = {};
+    const output = await this.spawn(['diff', commit, '--name-status'], { cwd: root });
+    const lines = output.split('\n');
+
+    lines.forEach((line) => {
+      if (!line) {
+        return;
+      }
+      const [x_, y_, leftpath, rightpath] = this.parseDiffLine(root, line);
       const x = x_ === GitFormat.untracked ? GitFormat.unmodified : x_;
       const y = y_ === GitFormat.ignored ? GitFormat.unmodified : y_;
 

@@ -4,7 +4,6 @@ import { homedir } from 'os';
 import pathLib from 'path';
 import { argOptions } from '../../../arg/argOptions';
 import { diagnosticHighlights } from '../../../diagnostic/highlights';
-import { onBufEnter } from '../../../events';
 import { gitHighlights } from '../../../git/highlights';
 import { gitManager } from '../../../git/manager';
 import { fileList } from '../../../lists/files';
@@ -31,6 +30,7 @@ import { Notifier } from 'coc-helper';
 import { ViewSource } from '../../../view/viewSource';
 import { startCocList } from '../../../lists/runner';
 import { Explorer } from '../../../types/pkg-config';
+import {commitList} from '../../../lists/git';
 
 export interface GitNode extends BaseTreeNode<GitNode, 'root' | 'child'> {
   name: string;
@@ -280,6 +280,20 @@ export class GitSource extends ExplorerSource<GitNode> {
       },
       listArgs,
     );
+    task.waitExplorerShow()?.catch(logger.error);
+  }
+
+  async searchGitCommits() {
+    const task = await startCocList(
+      this.explorer,
+      commitList,
+      {
+        callback: async (commit) => {
+          gitManager.setCurrentCommit(commit.split(' ')[0]);
+        },
+      },
+    );
+
     task.waitExplorerShow()?.catch(logger.error);
   }
 

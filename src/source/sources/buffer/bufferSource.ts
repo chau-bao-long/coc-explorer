@@ -69,6 +69,10 @@ export class BufferSource extends ExplorerSource<BufferNode> {
     bufferColumnRegistrar,
   );
 
+  static get enabled(): boolean | Promise<boolean> {
+    return false;
+  }
+
   async init() {
     if (this.config.get('activeMode')) {
       this.disposables.push(

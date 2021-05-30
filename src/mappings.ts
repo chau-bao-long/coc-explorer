@@ -209,6 +209,7 @@ class KeyMapping {
         ']C': ['wait', 'markNext:gitUnstaged'],
         '<<': 'gitStage',
         '>>': 'gitUnstage',
+        cf: 'showFilesInGitCommits',
       },
       vmap: {
         il: 'textobj:line:i',

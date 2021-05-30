@@ -61,7 +61,7 @@ export interface Explorer {
         /**
          * Explorer source name
          */
-        name: 'bookmark' | 'buffer' | 'file';
+        name: 'gitTree' | 'file';
         /**
          * Whether to expand it by default
          */
@@ -275,7 +275,7 @@ export interface Explorer {
     /**
      * Explorer source name
      */
-    name: 'bookmark' | 'buffer' | 'file';
+    name: 'gitTree' | 'file';
     /**
      * Whether to expand it by default
      */
@@ -401,6 +401,38 @@ export interface Explorer {
    * Explorer datetime format, check out https://date-fns.org/v2.9.0/docs/format
    */
   'explorer.datetime.format'?: string;
+  /**
+   * Custom hidden rules for file
+   */
+  'explorer.gitTree.hiddenRules'?: {
+    extensions?: string[];
+    filenames?: string[];
+    /**
+     * Pattern to icon group
+     */
+    patternMatches?: unknown[];
+    [k: string]: unknown;
+  };
+  /**
+   * Default show hidden files
+   */
+  'explorer.gitTree.showHiddenFiles'?: boolean;
+  /**
+   * Template for root node of file source
+   */
+  'explorer.gitTree.root.template'?: string;
+  /**
+   * Labeling template for root node of file source, use for preview when previewAction is labeling
+   */
+  'explorer.gitTree.root.labelingTemplate'?: string;
+  /**
+   * Template for child node file source
+   */
+  'explorer.gitTree.child.template'?: string;
+  /**
+   * Labeling template for child node of file source, use for preview when previewAction is labeling
+   */
+  'explorer.gitTree.child.labelingTemplate'?: string;
   /**
    * Explorer will automatically reveal to the current buffer when open explorer
    */

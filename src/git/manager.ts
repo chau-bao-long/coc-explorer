@@ -1,4 +1,4 @@
-import { Disposable } from 'coc.nvim';
+import { Disposable, window } from 'coc.nvim';
 import pathLib from 'path';
 import { config } from '../config';
 import { ExplorerSource } from '../source/source';
@@ -36,6 +36,7 @@ class GitManager {
 
   private showIgnored: boolean;
   private showUntrackedFiles: GitCommand.ShowUntrackedFiles;
+  private currentCommit: string = 'HEAD';
 
   constructor() {
     this.showIgnored = config.get<boolean>('git.showIgnored')!;
@@ -91,7 +92,9 @@ class GitManager {
           options.showUntrackedFiles ?? this.showUntrackedFiles,
       };
 
-      const statusRecord = await this.cmd.status(root, statusOptions);
+      const statusRecord = this.currentCommit === 'HEAD' 
+        ? await this.cmd.status(root, statusOptions)
+        : await this.cmd.diff(this.currentCommit, root);
       const statusArray = Object.values(statusRecord);
 
       // generate rootStatusCache
@@ -234,7 +237,6 @@ class GitManager {
     fullpath: string,
     isDirectory: boolean,
   ): GitMixedStatus | undefined {
-    // TODO getMixedStatus by root
     const statusPair = Object.entries(this.mixedStatusCache)
       .sort((a, b) => b[0].localeCompare(a[0]))
       .find(([rootPath]) => fullpath.startsWith(rootPath));
@@ -270,6 +272,10 @@ class GitManager {
 
   getRootStatus(root: string): GitRootStatus | undefined {
     return this.rootStatusCache[root];
+  }
+
+  setCurrentCommit(commitHash: string) {
+    this.currentCommit = commitHash;
   }
 }
 
